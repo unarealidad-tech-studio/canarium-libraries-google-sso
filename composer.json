@@ -1,0 +1,27 @@
+{
+    "name":         "canarium/canarium-libraries/google-sso",
+    "type":         "library",
+    "description":  "Lorem Ipsum",
+    "keywords":     ["canarium", "una realidad"],
+    "homepage":     "http://packages.canarium.ph",
+    "license":      "proprietary",
+    "authors": [
+        {
+            "name": "Jethro Laviste.",
+            "email": "jethro.laviste@unarealidad.com",
+            "role": "developer",
+            "homepage": "http://packages.canarium.ph"
+        }
+    ],
+    "support": {
+        "email":    "jethro.laviste@unarealidad.com"
+    },
+
+    "minimum-stability": "stable",
+
+    "autoload": {
+        "psr-0": {
+            "GoogleSSO\\": "src/"
+        }
+    }
+}

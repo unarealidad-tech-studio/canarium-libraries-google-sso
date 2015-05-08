@@ -1,0 +1,9 @@
+<?php
+return array(
+	'googlesso' => array(
+		'client_id' => 'CLIENT_ID',
+		'client_secret' => 'CLIENT_SECRET',
+		'scope' => array('SCOPE','SCOPE'),
+		'redirect_uri' => 'REDIRECT_URI',
+	)
+);
