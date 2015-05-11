@@ -22,6 +22,9 @@
     "autoload": {
         "psr-0": {
             "GoogleSSO\\": "src/"
-        }
+        },
+        "classmap": [
+            "./Module.php"
+        ]
     }
 }
