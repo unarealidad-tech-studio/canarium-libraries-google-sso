@@ -2,13 +2,22 @@
 /**
  * @author Jethro Laviste
  */
- 
+
 return array(
     'controllers' => array(
         'invokables' => array(
 			'GoogleSSO' => 'GoogleSSO\Controller\GoogleSSOController',
         ),
     ),
+
+    'bjyauthorize' => array(
+        'guards' => array(
+            'BjyAuthorize\Guard\Controller' => array(
+                array('controller' => 'GoogleSSO', 'roles' => array('admin', 'user', 'guest'))
+            ),
+        ),
+    ),
+
 	'router' => array(
         'routes' => array(
 			'oauth2callback' => array(
