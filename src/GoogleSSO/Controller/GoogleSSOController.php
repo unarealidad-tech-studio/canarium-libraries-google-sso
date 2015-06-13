@@ -45,7 +45,10 @@ class GoogleSSOController extends AbstractActionController
 
 			$login = new \GoogleSSO\Authentication\ForceLogin($user);
 			$this->zfcUserAuthentication()->getAuthService()->authenticate( $login );
-			return $this->redirect()->toRoute('zfcuser');
+
+            $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
+
+			return $this->redirect()->toRoute($redirectTo);
 		}
 
 		return $this->response;
