@@ -30,7 +30,7 @@ class GoogleSSOController extends AbstractActionController
 				$bcrypt->setCost($this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getPasswordCost());
 				$pass = $bcrypt->create($this->generateCode(6));
 
-				$user = new \CanariumCore\Entity\User();
+				$user = new $userEntityClass();
 				$user->setEmail($userinfo->get()->email);
 				$user->setPassword($pass);
 				$user->setDisplayName($userinfo->get()->name);
