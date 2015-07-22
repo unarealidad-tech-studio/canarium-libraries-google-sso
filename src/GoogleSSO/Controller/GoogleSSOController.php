@@ -26,19 +26,10 @@ class GoogleSSOController extends AbstractActionController
 			$userinfo = $plus->userinfo;
 			$userExist = $objectManager->getRepository($userEntityClass)->findOneBy(array('email' => $userinfo->get()->email));
 			if (!$userExist) {
-				$bcrypt = new Bcrypt;
-				$bcrypt->setCost($this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getPasswordCost());
-				$pass = $bcrypt->create($this->generateCode(6));
-
-				$user = new $userEntityClass();
-				$user->setEmail($userinfo->get()->email);
-				$user->setPassword($pass);
-				$user->setDisplayName($userinfo->get()->name);
-				$role = $objectManager->getRepository($roleEntityClass)->findOneBy(array('roleId' => 'user'));
-				$user->addRole($role);
-				$objectManager->persist($user);
-				$objectManager->flush();
-
+				$data['email'] = $userinfo->get()->email;
+				$data['password'] = $this->generateCode(6);
+				$data['passwordVerify'] = $data['password'];
+				$user = $this->getServiceLocator()->get('zfcuser_user_service')->register($data);
 			} else {
 				$user = $userExist;
 			}
@@ -46,7 +37,7 @@ class GoogleSSOController extends AbstractActionController
 			$login = new \GoogleSSO\Authentication\ForceLogin($user);
 			$this->zfcUserAuthentication()->getAuthService()->authenticate( $login );
 
-            $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
+			$redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
 
 			return $this->redirect()->toRoute($redirectTo);
 		}
