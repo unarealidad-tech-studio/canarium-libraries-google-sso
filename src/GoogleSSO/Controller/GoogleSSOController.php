@@ -34,6 +34,9 @@ class GoogleSSOController extends AbstractActionController
 				$user = $userExist;
 			}
 
+			$user->setLastLogin(new \DateTime());
+			$objectManager->flush();
+			
 			$login = new \GoogleSSO\Authentication\ForceLogin($user);
 			$this->zfcUserAuthentication()->getAuthService()->authenticate( $login );
 
