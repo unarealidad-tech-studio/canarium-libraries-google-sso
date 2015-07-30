@@ -29,7 +29,6 @@ class GoogleSSOController extends AbstractActionController
 				$data['email'] = $userinfo->get()->email;
 				$data['password'] = $this->generateCode(6);
 				$data['passwordVerify'] = $data['password'];
-				$data['company'] = '';
 				$user = $this->getServiceLocator()->get('zfcuser_user_service')->register($data);
 			} else {
 				$user = $userExist;
