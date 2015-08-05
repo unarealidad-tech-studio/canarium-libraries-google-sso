@@ -40,6 +40,22 @@ class GoogleSSOController extends AbstractActionController
 			$login = new \GoogleSSO\Authentication\ForceLogin($user);
 			$this->zfcUserAuthentication()->getAuthService()->authenticate( $login );
 
+            try {
+                // check if cookie needs to be set, only when prior auth has been successful
+                $rememberMeService = $this->getServiceLocator()->get('goaliorememberme_rememberme_service');
+                $rememberMeService->createSerie($user->getId());
+
+                /**
+                 *  If the user has first logged in with a cookie,
+                 *  but afterwords login with identity/credential
+                 *  we remove the "cookieLogin" session.
+                 */
+                $session = new \Zend\Session\Container('zfcuser');
+                $session->offsetSet("cookieLogin", false);
+            } catch (\Zend\ServiceManager\Exception\ServiceNotFoundException $e) {
+                //ignore for backward compatibility
+            }
+
 			$redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
 
 			return $this->redirect()->toRoute($redirectTo);
