@@ -60,6 +60,10 @@ class Module
 					$plus = new \Google_Service_Oauth2($sm->get('GoogleSSO\Client'));
 					return $plus;
 				},
+//                'GoogleSSO\People' => function ($sm) {
+//                    $plus = new \Google_Service_People($sm->get('GoogleSSO\Client'));
+//                    return $plus;
+//                },
 			)
 		);
 	}

@@ -15,6 +15,7 @@ class GoogleSSOController extends AbstractActionController
 
 		$client = $this->getServiceLocator()->get('GoogleSSO\Client');
 		$plus = $this->getServiceLocator()->get('GoogleSSO\Plus');
+//		$people = $this->getServiceLocator()->get('GoogleSSO\People');
 
 		if (isset($_GET['code'])) {
 			$userEntityClass = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getUserEntityClass();
@@ -24,8 +25,11 @@ class GoogleSSOController extends AbstractActionController
 			$client->setAccessToken($accessToken);
 
 			$userinfo = $plus->userinfo;
+
+//            var_dump($people->people_connections->listPeopleConnections('people/me'));exit;
 			$userExist = $objectManager->getRepository($userEntityClass)->findOneBy(array('email' => $userinfo->get()->email));
 			if (!$userExist) {
+                $data['displayName'] = $userinfo->get()->name;
 				$data['email'] = $userinfo->get()->email;
 				$data['password'] = $this->generateCode(6);
 				$data['passwordVerify'] = $data['password'];
