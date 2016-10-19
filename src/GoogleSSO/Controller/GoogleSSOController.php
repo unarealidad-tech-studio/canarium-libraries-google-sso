@@ -25,11 +25,9 @@ class GoogleSSOController extends AbstractActionController
 			$client->setAccessToken($accessToken);
 
 			$userinfo = $plus->userinfo;
-
 //            var_dump($people->people_connections->listPeopleConnections('people/me'));exit;
 			$userExist = $objectManager->getRepository($userEntityClass)->findOneBy(array('email' => $userinfo->get()->email));
 			if (!$userExist) {
-                $data['displayName'] = $userinfo->get()->name;
 				$data['email'] = $userinfo->get()->email;
 				$data['password'] = $this->generateCode(6);
 				$data['passwordVerify'] = $data['password'];
@@ -39,6 +37,9 @@ class GoogleSSOController extends AbstractActionController
 			}
 
 			$user->setLastLogin(new \DateTime());
+            $user->setFirstName($userinfo->get()->givenName);
+            $user->setLastName($userinfo->get()->familyName);
+            $user->setDisplayName($userinfo->get()->name);
 			$objectManager->flush();
 			
 			$login = new \GoogleSSO\Authentication\ForceLogin($user);
