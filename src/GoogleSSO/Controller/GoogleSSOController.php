@@ -11,44 +11,50 @@ use Zend\Crypt\Password\Bcrypt;
 class GoogleSSOController extends AbstractActionController
 {
     public function oauth2callbackAction(){
-		$objectManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-
 		$client = $this->getServiceLocator()->get('GoogleSSO\Client');
 		$plus = $this->getServiceLocator()->get('GoogleSSO\Plus');
 //		$people = $this->getServiceLocator()->get('GoogleSSO\People');
 
+        $config = $this->getServiceLocator()->get('Config');
+        $config = (!empty($config['googlesso']) ? $config['googlesso'] : array());
+
+        if (empty($config['auth_class_service'])) {
+            $config['auth_class_service'] = 'GoogleSSO\Authentication\ForceLogin';
+        }
+
 		if (isset($_GET['code'])) {
-			$userEntityClass = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getUserEntityClass();
-			$roleEntityClass = $this->getServiceLocator()->get('BjyAuthorize\Config')['role_providers']['BjyAuthorize\Provider\Role\ObjectRepositoryProvider']['role_entity_class'];
-			$auth = $this->getServiceLocator()->get('zfcuser_auth_service');
+//			$userEntityClass = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getUserEntityClass();
+//			$roleEntityClass = $this->getServiceLocator()->get('BjyAuthorize\Config')['role_providers']['BjyAuthorize\Provider\Role\ObjectRepositoryProvider']['role_entity_class'];
+//			$auth = $this->getServiceLocator()->get('zfcuser_auth_service');
 			$accessToken = $client->authenticate(trim($_GET['code']));
 			$client->setAccessToken($accessToken);
 
 			$userinfo = $plus->userinfo;
-//            var_dump($people->people_connections->listPeopleConnections('people/me'));exit;
-			$userExist = $objectManager->getRepository($userEntityClass)->findOneBy(array('email' => $userinfo->get()->email));
-			if (!$userExist) {
-				$data['email'] = $userinfo->get()->email;
-				$data['password'] = $this->generateCode(6);
-				$data['passwordVerify'] = $data['password'];
-				$user = $this->getServiceLocator()->get('zfcuser_user_service')->register($data);
-			} else {
-				$user = $userExist;
-			}
 
-			$user->setLastLogin(new \DateTime());
-            $user->setFirstName($userinfo->get()->givenName);
-            $user->setLastName($userinfo->get()->familyName);
-            $user->setDisplayName($userinfo->get()->name);
-			$objectManager->flush();
-			
-			$login = new \GoogleSSO\Authentication\ForceLogin($user);
-			$this->zfcUserAuthentication()->getAuthService()->authenticate( $login );
+            $auth_service = $this->getServiceLocator()->get($config['auth_class_service']);
+            $auth_service->setUserInfo(array(
+                'email' => $userinfo->get()->email,
+                'first_name' => $userinfo->get()->givenName,
+                'last_name' => $userinfo->get()->familyName,
+                'display_name' => $userinfo->get()->name
+            ));
+            $result = $this->zfcUserAuthentication()->getAuthService()->authenticate($auth_service);
+
+            if (!$result->isValid()) {
+                $flash_messenger = $this->flashMessenger()->setNamespace('zfcuser-login-form');
+                foreach ($result->getMessages() as $message) {
+                    $flash_messenger->addMessage($message);
+                }
+
+                return $this->redirect()->toUrl($this->url()->fromRoute('zfcuser/login'));
+            }
+
+            // var_dump($people->people_connections->listPeopleConnections('people/me'));exit;
 
             try {
                 // check if cookie needs to be set, only when prior auth has been successful
                 $rememberMeService = $this->getServiceLocator()->get('goaliorememberme_rememberme_service');
-                $rememberMeService->createSerie($user->getId());
+                $rememberMeService->createSerie($result->getIdentity());
 
                 /**
                  *  If the user has first logged in with a cookie,
@@ -61,21 +67,18 @@ class GoogleSSOController extends AbstractActionController
                 //ignore for backward compatibility
             }
 
-			$redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
+            $session = new \Zend\Session\Container('canarium');
 
-			return $this->redirect()->toRoute($redirectTo);
+            if (!empty($session->redirect_url)) {
+                $redirectTo = $session->redirect_url;
+                unset($session->redirect_url);
+                return $this->redirect()->toUrl($redirectTo);
+            } else {
+                $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
+                return $this->redirect()->toRoute($redirectTo);
+            }
 		}
 
 		return $this->response;
     }
-
-	public function generateCode($length = 10) {
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$charactersLength = strlen($characters);
-		$randomString = '';
-		for ($i = 0; $i < $length; $i++) {
-			$randomString .= $characters[rand(0, $charactersLength - 1)];
-		}
-		return $randomString;
-	}
 }

@@ -47,6 +47,13 @@ class Module
 	{
 		return array(
 			'factories' => array(
+                'GoogleSSO\Authentication\ForceLogin' => function($sm) {
+                    $userEntityClass = $sm->get('zfcuser_user_service')->getOptions()->getUserEntityClass();
+                    $userService = $sm->get('zfcuser_user_service');
+                    $object_manager = $sm->get('Doctrine\ORM\EntityManager');
+
+                    return new \GoogleSSO\Authentication\ForceLogin($userEntityClass, $userService, $object_manager);
+                },
 				'GoogleSSO\Client' => function ($sm) {
 					$config = $sm->get('config');
 					$client = new \Google_Client();
@@ -54,6 +61,7 @@ class Module
 					$client->setClientSecret($config['googlesso']['client_secret']);
 					$client->addScope($config['googlesso']['scope']);
 					$client->setRedirectUri($config['googlesso']['redirect_uri']);
+                    $client->setPrompt('select_account');
 					return $client;
 				},
 				'GoogleSSO\Plus' => function ($sm) {

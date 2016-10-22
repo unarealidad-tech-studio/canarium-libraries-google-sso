@@ -5,5 +5,6 @@ return array(
 		'client_secret' => 'CLIENT_SECRET',
 		'scope' => array('SCOPE','SCOPE'),
 		'redirect_uri' => 'REDIRECT_URI',
+        'auth_class_service' => 'GoogleSSO\Authentication\ForceLogin'
 	)
 );
