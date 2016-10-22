@@ -7,6 +7,10 @@ class CreateAuthUrl extends AbstractHelper
     public function __invoke(){
         $sm = $this->getView()->getHelperPluginManager()->getServiceLocator();
 		$client = $sm->get('GoogleSSO\Client');
-		return $client->createAuthUrl();
+		$auth_url =  $client->createAuthUrl();
+
+        $auth_url = str_replace('&approval_prompt=auto', '', $auth_url);
+
+        return $auth_url;
     }
 }
