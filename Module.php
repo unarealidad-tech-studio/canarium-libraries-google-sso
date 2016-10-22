@@ -52,7 +52,7 @@ class Module
                     $userService = $sm->get('zfcuser_user_service');
                     $object_manager = $sm->get('Doctrine\ORM\EntityManager');
 
-                    return new \GoogleSSO\Authentication\ForceLogin($userEntityClass, $userService, $object_manager);
+                    return new \GoogleSSO\Authentication\NewForceLogin($userEntityClass, $userService, $object_manager);
                 },
 				'GoogleSSO\Client' => function ($sm) {
 					$config = $sm->get('config');
