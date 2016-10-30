@@ -91,6 +91,10 @@ class GoogleSSOController extends AbstractActionController
                     $em->persist($current_account);
                 }
 
+                if (is_string($accessToken)) {
+                    $accessToken = json_decode($accessToken);
+                }
+
                 $current_account->setRelatedEmailAddress($userinfo->get()->email);
                 $current_account->setRelatedFirstName($userinfo->get()->givenName);
                 $current_account->setRelatedLastName($userinfo->get()->familyName);
