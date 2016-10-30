@@ -54,6 +54,13 @@ class Module
 
                     return new \GoogleSSO\Authentication\NewForceLogin($userEntityClass, $userService, $object_manager);
                 },
+                'GoogleSSO\Authentication\ConnectedAccount' => function($sm) {
+                    $userEntityClass = $sm->get('zfcuser_user_service')->getOptions()->getUserEntityClass();
+                    $userService = $sm->get('zfcuser_user_service');
+                    $object_manager = $sm->get('Doctrine\ORM\EntityManager');
+
+                    return new \GoogleSSO\Authentication\ConnectedAccount($userEntityClass, $userService, $object_manager);
+                },
 				'GoogleSSO\Client' => function ($sm) {
 					$config = $sm->get('config');
 					$client = new \Google_Client();
