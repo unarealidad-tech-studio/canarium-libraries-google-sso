@@ -92,7 +92,7 @@ class GoogleSSOController extends AbstractActionController
                 }
 
                 if (is_string($accessToken)) {
-                    $accessToken = json_decode($accessToken);
+                    $accessToken = json_decode($accessToken, true);
                 }
 
                 $current_account->setRelatedEmailAddress($userinfo->get()->email);
