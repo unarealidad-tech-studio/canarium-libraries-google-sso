@@ -46,7 +46,7 @@ class ApiController extends AbstractActionController
         try {
             $associated_entities = $this->getEntityManager()->getRepository('\GoogleSSO\Entity\AssociatedGmailAccount')->findBy(array(
                 'user' => $current_user
-            ));
+            ), array('is_main' => 'DESC'));
 
             foreach ($associated_entities as $entity) {
                 $associated_accounts[] = array(
