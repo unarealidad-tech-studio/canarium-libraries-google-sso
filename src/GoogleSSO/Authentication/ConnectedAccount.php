@@ -67,11 +67,17 @@ class ConnectedAccount implements \Zend\Authentication\Adapter\AdapterInterface
         $user = $this->object_manager->getRepository($this->user_class)->findOneBy(array('email' => $user_info['email']));
 
         if (!$user) {
-            $data = array();
-            $data['email'] = $user_info['email'];
-            $data['password'] = $this->generateCode(6);
-            $data['passwordVerify'] = $data['password'];
-            $user = $this->user_service->register($data);
+            if (!empty($user_info['login_only'])) {
+                return new Result(Result::FAILURE_CREDENTIAL_INVALID, null, array(
+                    'You need to register first. Go to our website to register'
+                ));
+            } else {
+                $data = array();
+                $data['email'] = $user_info['email'];
+                $data['password'] = $this->generateCode(6);
+                $data['passwordVerify'] = $data['password'];
+                $user = $this->user_service->register($data);
+            }
         }
 
         $user->setLastLogin(new \DateTime());
