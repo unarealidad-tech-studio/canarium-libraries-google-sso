@@ -80,6 +80,28 @@ class ConnectedAccount implements \Zend\Authentication\Adapter\AdapterInterface
             }
         }
 
+
+
+        if (!empty($user_info['login_only'])) {
+            $valid_user = false;
+
+            foreach ($user->getRoles() as $user_role) {
+                if (in_array($user_role->getRoleId(), array('personal', 'professional'))) {
+                    $valid_user = true;
+                    break;
+                }
+            }
+
+            if (!$valid_user) {
+                return new Result(Result::FAILURE_CREDENTIAL_INVALID, null, array(
+                    'Upgrade to personal or professional to use the mobile app. Visit our website for more details.'
+                ));
+            }
+        }
+
+
+
+
         $user->setLastLogin(new \DateTime());
         $user->setFirstName($user_info['first_name']);
         $user->setLastName($user_info['last_name']);
