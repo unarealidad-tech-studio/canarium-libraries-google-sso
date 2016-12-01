@@ -48,13 +48,14 @@ class GoogleSSOController extends AbstractActionController
 
                 if (!$result->isValid()) {
                     $flash_messenger = $this->flashMessenger();
-                    foreach ($result->getMessages() as $message) {
+                    $messages = $result->getMessages();
+                    foreach ($messages as $message) {
                         $flash_messenger->addMessage($message);
                     }
 
 //                    return $this->redirect()->toUrl($this->url()->fromRoute('zfcuser/login'));
-                    $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
-                    return $this->redirect()->toRoute($redirectTo);
+                    $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLogoutRedirectRoute();
+                    return $this->redirect()->toRoute($redirectTo, array(), array('query' => array('error' => array_shift($messages))));
                 }
 
                 // var_dump($people->people_connections->listPeopleConnections('people/me'));exit;
@@ -122,6 +123,7 @@ class GoogleSSOController extends AbstractActionController
             }
 		}
 
+        $error = '';
         if (!empty($_GET['error'])) {
             $flash_messenger = $this->flashMessenger();
             $error = str_replace('_', ' ', $_GET['error']);
@@ -129,8 +131,8 @@ class GoogleSSOController extends AbstractActionController
             $flash_messenger->addMessage($error);
         }
 
-        $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
-        return $this->redirect()->toRoute($redirectTo);
+        $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLogoutRedirectRoute();
+        return $this->redirect()->toRoute($redirectTo, array(), array('query' => array('error' => $error)));
 
 //		return $this->response;
     }
