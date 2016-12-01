@@ -80,8 +80,6 @@ class ConnectedAccount implements \Zend\Authentication\Adapter\AdapterInterface
             }
         }
 
-
-
         if (!empty($user_info['login_only'])) {
             $valid_user = false;
 
@@ -98,9 +96,6 @@ class ConnectedAccount implements \Zend\Authentication\Adapter\AdapterInterface
                 ));
             }
         }
-
-
-
 
         $user->setLastLogin(new \DateTime());
         $user->setFirstName($user_info['first_name']);

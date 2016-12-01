@@ -47,12 +47,14 @@ class GoogleSSOController extends AbstractActionController
                 $result = $this->zfcUserAuthentication()->getAuthService()->authenticate($auth_service);
 
                 if (!$result->isValid()) {
-                    $flash_messenger = $this->flashMessenger()->setNamespace('zfcuser-login-form');
+                    $flash_messenger = $this->flashMessenger();
                     foreach ($result->getMessages() as $message) {
                         $flash_messenger->addMessage($message);
                     }
 
-                    return $this->redirect()->toUrl($this->url()->fromRoute('zfcuser/login'));
+//                    return $this->redirect()->toUrl($this->url()->fromRoute('zfcuser/login'));
+                    $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
+                    return $this->redirect()->toRoute($redirectTo);
                 }
 
                 // var_dump($people->people_connections->listPeopleConnections('people/me'));exit;
@@ -120,6 +122,16 @@ class GoogleSSOController extends AbstractActionController
             }
 		}
 
-		return $this->response;
+        if (!empty($_GET['error'])) {
+            $flash_messenger = $this->flashMessenger();
+            $error = str_replace('_', ' ', $_GET['error']);
+            $error = ucwords($error);
+            $flash_messenger->addMessage($error);
+        }
+
+        $redirectTo = $this->getServiceLocator()->get('zfcuser_user_service')->getOptions()->getLoginRedirectRoute();
+        return $this->redirect()->toRoute($redirectTo);
+
+//		return $this->response;
     }
 }
