@@ -1,16 +1,16 @@
 {
     "name":         "unarealidad/canarium-libraries-google-sso",
     "type":         "library",
-    "description":  "Lorem Ipsum",
+    "description":  "Enables Canarium to have a Google Login/Sign up functionality.",
     "keywords":     ["canarium", "una realidad"],
-    "homepage":     "http://packages.canarium.ph",
-    "license":      "proprietary",
+    "homepage":     "http://www.canarium.ph",
+    "license":      "MIT",
     "authors": [
         {
             "name": "Errol A. Zuñiga Jr.",
             "email": "errol.zuniga@unarealidad.com",
             "role": "developer",
-            "homepage": "http://packages.canarium.ph"
+            "homepage": "https://github.com/Fatal-Errol"
         }
     ],
     "support": {
