@@ -1,5 +1,5 @@
 {
-    "name":         "canarium/canarium-libraries/google-sso",
+    "name":         "unarealidad/canarium-libraries-google-sso",
     "type":         "library",
     "description":  "Lorem Ipsum",
     "keywords":     ["canarium", "una realidad"],
@@ -7,14 +7,14 @@
     "license":      "proprietary",
     "authors": [
         {
-            "name": "Jethro Laviste.",
-            "email": "jethro.laviste@unarealidad.com",
+            "name": "Errol A. Zuñiga Jr.",
+            "email": "errol.zuniga@unarealidad.com",
             "role": "developer",
             "homepage": "http://packages.canarium.ph"
         }
     ],
     "support": {
-        "email":    "jethro.laviste@unarealidad.com"
+        "email":    "errol.zuniga@unarealidad.com"
     },
 
     "minimum-stability": "stable",
